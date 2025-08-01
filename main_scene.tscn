@@ -1,0 +1,107 @@
+[gd_scene load_steps=17 format=3 uid="uid://dggy6rep2wdvh"]
+
+[ext_resource type="Texture2D" uid="uid://d2p63fdt7ch18" path="res://texture_09.png" id="1_2c62f"]
+[ext_resource type="Script" uid="uid://pucfw1amg8o7" path="res://character_body_3d.gd" id="2_gyfs4"]
+[ext_resource type="Shader" uid="uid://ddjwldpl3rrq1" path="res://transparency_circle.gdshader" id="3_gyfs4"]
+[ext_resource type="Script" uid="uid://bhuxph8sf3jrw" path="res://mesh_example.gd" id="4_d5x1h"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2c62f"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_gyfs4"]
+sky_material = SubResource("ProceduralSkyMaterial_2c62f")
+
+[sub_resource type="Environment" id="Environment_d5x1h"]
+background_mode = 2
+sky = SubResource("Sky_gyfs4")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d5x1h"]
+albedo_texture = ExtResource("1_2c62f")
+uv1_triplanar = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8mm7a"]
+size = Vector2(20, 20)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_hq1ik"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_nfk4m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_66tet"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d5x1h"]
+render_priority = 0
+shader = ExtResource("3_gyfs4")
+shader_parameter/player_screen_pos = Vector2(0, 0)
+shader_parameter/player_position = Vector3(0, 0, 0)
+shader_parameter/camera_forward = Vector3(0, 0, 0)
+shader_parameter/position_adjustment = Vector2(0, -0.15)
+shader_parameter/radius = 0.2
+shader_parameter/smoothness = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_8mm7a"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hq1ik"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d5x1h"]
+size = Vector3(2, 10, 2)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_d5x1h")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_d5x1h")
+mesh = SubResource("PlaneMesh_8mm7a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("WorldBoundaryShape3D_hq1ik")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." groups=["player"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.87176, 0)
+script = ExtResource("2_gyfs4")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 2.24066, 5.0357)
+far = 400.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+mesh = SubResource("CapsuleMesh_nfk4m")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_66tet")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.70432, 1, 0)
+material_override = SubResource("ShaderMaterial_d5x1h")
+mesh = SubResource("BoxMesh_8mm7a")
+script = ExtResource("4_d5x1h")
+metadata/_edit_group_ = true
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_hq1ik")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.29568, 1, 0)
+material_override = SubResource("ShaderMaterial_d5x1h")
+mesh = SubResource("BoxMesh_d5x1h")
+script = ExtResource("4_d5x1h")
+metadata/_edit_group_ = true
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D3/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_hq1ik")
